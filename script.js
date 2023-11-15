@@ -8,4 +8,7 @@
 const insertParser = require("./parsers/insert");
 
 const insertCommand = insertParser('INSERT { "a" : 1 } INTO test');
-console.log(insertCommand);
+async function main() {
+  console.log(await insertCommand.perform());
+}
+main();
