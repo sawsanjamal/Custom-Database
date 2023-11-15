@@ -4,11 +4,30 @@
 // Execute input
 //Return data
 // Repeat
-
-const insertParser = require("./parsers/insert");
-
-const insertCommand = insertParser('INSERT { "a" : 1 } INTO test');
-async function main() {
-  console.log(await insertCommand.perform());
+const parseCommand = require("./parseCommand");
+const readline = require("readline");
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+async function start() {
+  while (true) {
+    try {
+      const commandString = await waitForCommand();
+      console.log(commandString);
+      printFormattedJSON(await parseCommand(commandString));
+    } catch (e) {
+      console.log(`${e.name}: ${e.message}`);
+    }
+  }
 }
-main();
+start();
+
+function waitForCommand() {
+  return new Promise((resolve) => {
+    rl.question("> ", resolve);
+  });
+}
+function printFormattedJSON(string) {
+  console.log(JSON.stringify(string, null, 2));
+}

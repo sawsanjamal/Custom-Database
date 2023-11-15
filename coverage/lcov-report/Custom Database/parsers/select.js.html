@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for Custom Database/parsers/insert.js</title>
+    <title>Code coverage report for Custom Database/parsers/select.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,13 +19,13 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">Custom Database/parsers</a> insert.js</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">Custom Database/parsers</a> select.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>16/16</span>
+                <span class='fraction'>15/15</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>14/14</span>
+                <span class='fraction'>13/13</span>
             </div>
         
             
@@ -91,65 +91,62 @@
 <a name='L26'></a><a href='#L26'>26</a>
 <a name='L27'></a><a href='#L27'>27</a>
 <a name='L28'></a><a href='#L28'>28</a>
-<a name='L29'></a><a href='#L29'>29</a>
-<a name='L30'></a><a href='#L30'>30</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L29'></a><a href='#L29'>29</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const InsertCommand = require("../commands/InsertCommand");
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const SelectCommand = require("../commands/SelectCommand");
 &nbsp;
-const INSERT_COMMAND = "INSERT";
-const BEFORE_TABLE_COMMAND = "INTO";
+const SELECT_COMMAND = "SELECT";
+const BEFORE_TABLE_COMMAND = "FROM";
+const EVERYTHING_SELECTOR = "*";
 const REGEX = new RegExp(
-  `${INSERT_COMMAND}\\s+(?&lt;record&gt;{.*})\\s+${BEFORE_TABLE_COMMAND}\\s+(?&lt;tableName&gt;\\S+)`
+  `${SELECT_COMMAND}\\s+(?&lt;columns&gt;.*)\\s+${BEFORE_TABLE_COMMAND}\\s+(?&lt;tableName&gt;\\S+)`
 );
 &nbsp;
-function parseInsertCommand(commandString) {
+function parseSelectCommand(commandString) {
   const regexMatch = commandString.match(REGEX);
   if (regexMatch === null) return;
+  const columns = regexMatch.groups.columns
+    .replace(/\s/, "")
+    .split(",")
+    .filter((column) =&gt; column !== "");
 &nbsp;
-  const record = safeParseJSON(regexMatch.groups.record);
-  if (record == null) return;
+  if (columns.length === 0) return;
   const tableName = regexMatch.groups.tableName;
 &nbsp;
-  return new InsertCommand({
+  return new SelectCommand({
     tableName,
-    record,
+    columns,
+    allColumns: columns.includes(EVERYTHING_SELECTOR),
   });
 }
-function safeParseJSON(string) {
-  try {
-    return JSON.parse(string);
-  } catch (e) {
-    return;
-  }
-}
-module.exports = parseInsertCommand;
+&nbsp;
+module.exports = parseSelectCommand;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
