@@ -9,6 +9,14 @@ module.exports = class Table {
   get filePath() {
     return `data/${this.tableName}.json`;
   }
+  overwriteTable(data) {
+    return new Promise((resolve, reject) => {
+      fs.writeFile(this.filePath, JSON.stringify(data), (error) => {
+        if (error) return reject(error);
+        resolve();
+      });
+    });
+  }
   insertRecord(record) {
     const recordWithId = { _id: uuidV4(), ...record };
     return new Promise((resolve, reject) => {
